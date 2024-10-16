@@ -109,7 +109,7 @@ PoSPro is licensed under the MIT License. See the [LICENSE](LICENSE) file for mo
 
 | Dashboard                | Transaction History      | Product Management        |
 |--------------------------|--------------------------|---------------------------|
-| ![Dashboard](screenshots/dashboard.png) | ![History](screenshots/history.png) | ![Products](screenshots/products.png) |
+| ! | ! | ! |
 
 ---
 
