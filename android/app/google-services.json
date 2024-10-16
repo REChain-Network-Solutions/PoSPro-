@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "364433028421",
+    "project_id": "pospro-9ad69",
+    "storage_bucket": "pospro-9ad69.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:364433028421:android:979a5f77a50b2c54847a2c",
+        "android_client_info": {
+          "package_name": "com.delus.pos"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB7GkZZ4PYbEYY9HUyIj3QQT0Knx20BWP4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
