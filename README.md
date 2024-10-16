@@ -1,6 +1,10 @@
 ```markdown
 # PoSPro: Decentralized Point of Sale System
 
+https://api.codemagic.io/apps/670fae6a48707efc6a02edce/670fae6a48707efc6a02edcd/status_badge.svg
+
+[![Codemagic build status](https://api.codemagic.io/apps/670fae6a48707efc6a02edce/670fae6a48707efc6a02edcd/status_badge.svg)](https://codemagic.io/app/670fae6a48707efc6a02edce/670fae6a48707efc6a02edcd/latest_build)
+
 [![License](https://img.shields.io/github/license/REChain-Network-Solutions/PoSPro-.git)](LICENSE)
 [![Version](https://img.shields.io/github/v/release/REChain-Network-Solutions/PoSPro-.git)](https://github.com/REChain-Network-Solutions/PoSPro-.git/releases)
 [![Flutter](https://img.shields.io/badge/flutter-v3.0-blue)](https://flutter.dev/)
