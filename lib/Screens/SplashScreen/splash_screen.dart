@@ -502,7 +502,7 @@ class _SplashScreenState extends State<SplashScreen> {
               children: [
                 Center(
                   child: Text(
-                    lang.S.of(context).powerdedByrechain,
+                    lang.S.of(context).powerdedByacnoo,
                     style: GoogleFonts.poppins(color: Colors.white, fontWeight: FontWeight.normal, fontSize: 20.0),
                   ),
                 ),
