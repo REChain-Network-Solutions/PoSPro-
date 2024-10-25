@@ -36,7 +36,7 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId "com.maantechnology.salesprosaasmain"
+        applicationId "com.delus.pos"
         minSdkVersion 21
         targetSdkVersion 34
         multiDexEnabled true
