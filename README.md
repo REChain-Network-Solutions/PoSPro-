@@ -1,5 +1,3 @@
-https://api.codemagic.io/apps/670fae6a48707efc6a02edce/670fae6a48707efc6a02edcd/status_badge.svg
-
 [![Codemagic build status](https://api.codemagic.io/apps/670fae6a48707efc6a02edce/670fae6a48707efc6a02edcd/status_badge.svg)](https://codemagic.io/app/670fae6a48707efc6a02edce/670fae6a48707efc6a02edcd/latest_build)
 
 ```markdown
