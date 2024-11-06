@@ -52,15 +52,18 @@ android {
         }
     }
     dependencies {
+        implementation 'com.huawei.agconnect:agconnect-core:1.5.2.300'
         // Import the BoM for the Firebase platform
-//        implementation platform('com.google.firebase:firebase-bom:31.0.1')
+        // Implementation platform('com.google.firebase:firebase-bom:31.0.1')
 
         // Add the dependency for the Firebase Authentication library
         // When using the BoM, you don't specify versions in Firebase library dependencies
-//        implementation 'com.google.firebase:firebase-auth'
+        // Implementation 'com.google.firebase:firebase-auth'
     }
 }
 
 flutter {
     source '../..'
 }
+
+apply plugin: 'com.huawei.agconnect'
