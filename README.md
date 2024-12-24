@@ -1,4 +1,6 @@
-[![Codemagic build status](https://api.codemagic.io/apps/670fae6a48707efc6a02edce/670fae6a48707efc6a02edcd/status_badge.svg)](https://codemagic.io/app/670fae6a48707efc6a02edce/670fae6a48707efc6a02edcd/latest_build)
+https://api.codemagic.io/apps/676a8f05a3be8873fa06c8e5/676a8f05a3be8873fa06c8e4/status_badge.svg
+
+[![Codemagic build status](https://api.codemagic.io/apps/676a8f05a3be8873fa06c8e5/676a8f05a3be8873fa06c8e4/status_badge.svg)](https://codemagic.io/app/676a8f05a3be8873fa06c8e5/676a8f05a3be8873fa06c8e4/latest_build)
 
 ```markdown
 # PoSPro: Decentralized Point of Sale System
