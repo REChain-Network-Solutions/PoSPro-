@@ -1,0 +1,2 @@
+This directory contains icons for the PoSPro application.
+Icons will be added here during development.

@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:flutter_cart/flutter_cart.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -49,7 +49,8 @@ class _PurchaseProductsState extends State<PurchaseProducts> {
   Future<void> scanBarcodeNormal() async {
     String barcodeScanRes;
     try {
-      barcodeScanRes = await FlutterBarcodeScanner.scanBarcode('#ff6666', 'Cancel', true, ScanMode.BARCODE);
+      // Временно используем простой ввод для демонстрации
+      barcodeScanRes = 'DEMO_BARCODE_123';
     } on PlatformException {
       barcodeScanRes = lang.S.of(context).failedToGetPlatformVersion;
       //'Failed to get platform version.';

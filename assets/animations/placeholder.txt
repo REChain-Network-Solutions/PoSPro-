@@ -1,0 +1,2 @@
+This directory contains animations for the PoSPro application.
+Animation files will be added here during development.

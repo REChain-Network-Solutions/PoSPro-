@@ -25,31 +25,108 @@ class SettingScreen extends StatefulWidget {
   const SettingScreen({Key? key}) : super(key: key);
 
   @override
-  // ignore: library_private_types_in_public_api
   _SettingScreenState createState() => _SettingScreenState();
 }
 
-class _SettingScreenState extends State<SettingScreen> {
+class _SettingScreenState extends State<SettingScreen>
+    with TickerProviderStateMixin {
   String? dropdownValue = '\$ (US Dollar)';
   bool expanded = false;
   bool expandedHelp = false;
   bool expandedAbout = false;
   bool selected = false;
+  
+  // Анимации
+  late AnimationController _fadeController;
+  late AnimationController _slideController;
+  late AnimationController _scaleController;
+  late AnimationController _pulseController;
+  late Animation<double> _fadeAnimation;
+  late Animation<Offset> _slideAnimation;
+  late Animation<double> _scaleAnimation;
+  late Animation<double> _pulseAnimation;
+
+  // Настройки
+  bool isDarkMode = false;
+  bool isAutoSync = true;
+  bool isPushNotifications = true;
+  bool isBiometricAuth = false;
+  bool isOfflineMode = false;
+  bool isPrintEnable = true;
+  
+  String selectedLanguage = 'English';
+  String selectedCurrency = 'USD';
+  String selectedTimeZone = 'UTC+0';
+  
+  List<String> languages = ['English', 'Spanish', 'French', 'German', 'Chinese', 'Japanese'];
+  List<String> currencies = ['USD', 'EUR', 'GBP', 'JPY', 'CAD', 'AUD'];
+  List<String> timeZones = ['UTC+0', 'UTC+1', 'UTC+2', 'UTC+3', 'UTC+4', 'UTC+5'];
+  
+  // Сохраняем ref для использования в диалогах
+  WidgetRef? currentRef;
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
+    
+    // Инициализация анимаций
+    _fadeController = AnimationController(
+      duration: const Duration(milliseconds: 800),
+      vsync: this,
+    );
+    _slideController = AnimationController(
+      duration: const Duration(milliseconds: 600),
+      vsync: this,
+    );
+    _scaleController = AnimationController(
+      duration: const Duration(milliseconds: 400),
+      vsync: this,
+    );
+    _pulseController = AnimationController(
+      duration: const Duration(milliseconds: 2000),
+      vsync: this,
+    );
+
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _fadeController, curve: Curves.easeInOut),
+    );
+    _slideAnimation = Tween<Offset>(
+      begin: const Offset(0, 0.3),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(parent: _slideController, curve: Curves.easeOut));
+    _scaleAnimation = Tween<double>(begin: 0.8, end: 1.0).animate(
+      CurvedAnimation(parent: _scaleController, curve: Curves.elasticOut),
+    );
+    _pulseAnimation = Tween<double>(begin: 1.0, end: 1.1).animate(
+      CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
+    );
+
+    _fadeController.forward();
+    _slideController.forward();
+    _scaleController.forward();
+    _pulseController.repeat(reverse: true);
+
     printerIsEnable();
     getCurrency();
+  }
+
+  @override
+  void dispose() {
+    _fadeController.dispose();
+    _slideController.dispose();
+    _scaleController.dispose();
+    _pulseController.dispose();
+    super.dispose();
   }
 
   getCurrency() async {
     final prefs = await SharedPreferences.getInstance();
     String? data = prefs.getString('currency');
 
+    List<String> currencyItems = ['\$ (US Dollar)', '€ (Euro)', '£ (Pound)', '¥ (Yen)', '₽ (Ruble)'];
+
     if (!data.isEmptyOrNull) {
-      for (var element in items) {
+      for (var element in currencyItems) {
         if (element.substring(0, 2).contains(data!)) {
           setState(() {
             dropdownValue = element;
@@ -59,14 +136,13 @@ class _SettingScreenState extends State<SettingScreen> {
       }
     } else {
       setState(() {
-        dropdownValue = items[0];
+        dropdownValue = currencyItems[0];
       });
     }
   }
 
   void printerIsEnable() async {
     final prefs = await SharedPreferences.getInstance();
-
     isPrintEnable = prefs.getBool('isPrintEnable') ?? true;
   }
 
@@ -75,111 +151,250 @@ class _SettingScreenState extends State<SettingScreen> {
     return SafeArea(
       child: Consumer(builder: (context, ref, _) {
         AsyncValue<BusinessInformation> businessInfo = ref.watch(businessInfoProvider);
+        
+        // Сохраняем ref для использования в диалогах
+        currentRef = ref;
+        
         return Scaffold(
-          backgroundColor: kWhite,
-          body: SingleChildScrollView(
+          backgroundColor: const Color(0xFFF8F9FA),
+          body: CustomScrollView(
+            slivers: [
+              _buildSliverAppBar(businessInfo),
+              SliverToBoxAdapter(
+                child: FadeTransition(
+                  opacity: _fadeAnimation,
+                  child: SlideTransition(
+                    position: _slideAnimation,
             child: Column(
               children: [
-                Card(
-                  elevation: 0.0,
-                  color: kWhite,
-                  child: Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: businessInfo.when(data: (details) {
-                      return Row(
+                        _buildProfileHeader(businessInfo),
+                        _buildQuickSettings(),
+                        _buildMainSettings(),
+                        _buildAdvancedSettings(),
+                        _buildSupportSection(),
+                        const SizedBox(height: 30),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      }),
+    );
+  }
+
+  Widget _buildSliverAppBar(AsyncValue<BusinessInformation> businessInfo) {
+    return SliverAppBar(
+      expandedHeight: 140,
+      floating: false,
+      pinned: true,
+      backgroundColor: Theme.of(context).primaryColor,
+      elevation: 0,
+      flexibleSpace: FlexibleSpaceBar(
+        title: const Text(
+          'Настройки',
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+          ),
+        ),
+        background: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Theme.of(context).primaryColor,
+                Theme.of(context).primaryColor.withOpacity(0.8),
+                Theme.of(context).primaryColor.withOpacity(0.6),
+              ],
+            ),
+          ),
+          child: Center(
+            child: ScaleTransition(
+              scale: _pulseAnimation,
+              child: Icon(
+                Icons.settings,
+                size: 60,
+                color: Colors.white.withOpacity(0.3),
+              ),
+            ),
+          ),
+        ),
+      ),
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.refresh, color: Colors.white),
+          onPressed: () => _refreshSettings(),
+        ),
+        IconButton(
+          icon: const Icon(Icons.help_outline, color: Colors.white),
+          onPressed: () => _showHelpDialog(),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildProfileHeader(AsyncValue<BusinessInformation> businessInfo) {
+    return Container(
+      margin: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
+          ),
+        ],
+      ),
+      child: businessInfo.when(
+        data: (details) => Column(
                         children: [
-                          GestureDetector(
-                            onTap: () {
-                              const ProfileDetails().launch(context);
-                            },
+            ScaleTransition(
+              scale: _scaleAnimation,
+              child: GestureDetector(
+                onTap: () => const ProfileDetails().launch(context),
                             child: Container(
-                              height: 42,
-                              width: 42,
+                  height: 80,
+                  width: 80,
                               decoration: BoxDecoration(
+                    shape: BoxShape.circle,
                                 image: details.pictureUrl == null
-                                    ? const DecorationImage(image: AssetImage('images/no_shop_image.png'), fit: BoxFit.cover)
-                                    : DecorationImage(image: NetworkImage(APIConfig.domain + details.pictureUrl.toString()), fit: BoxFit.cover),
-                                borderRadius: BorderRadius.circular(50),
+                        ? const DecorationImage(
+                            image: AssetImage('images/no_shop_image.png'),
+                            fit: BoxFit.cover,
+                          )
+                        : DecorationImage(
+                            image: NetworkImage(APIConfig.domain + details.pictureUrl.toString()),
+                            fit: BoxFit.cover,
+                          ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Theme.of(context).primaryColor.withOpacity(0.3),
+                        blurRadius: 20,
+                        offset: const Offset(0, 10),
+                      ),
+                    ],
                               ),
                             ),
                           ),
-                          const SizedBox(
-                            width: 10.0,
                           ),
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
+            const SizedBox(height: 20),
                               Text(
-                                details.user?.role == 'staff' ? '${details.companyName ?? ''} [${details.user?.name ?? ''}]' : details.companyName ?? '',
+              details.user?.role == 'staff'
+                  ? '${details.companyName ?? ''} [${details.user?.name ?? ''}]'
+                  : details.companyName ?? '',
                                 style: GoogleFonts.poppins(
-                                  fontSize: 20.0,
+                fontSize: 24,
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.black,
+                color: Colors.grey[800],
                                 ),
+              textAlign: TextAlign.center,
                               ),
+            const SizedBox(height: 8),
                               Text(
                                 details.category?.name ?? '',
                                 style: GoogleFonts.poppins(
-                                  fontSize: 15.0,
-                                  fontWeight: FontWeight.normal,
-                                  color: kGreyTextColor,
-                                ),
+                fontSize: 16,
+                color: Colors.grey[600],
+              ),
+            ),
+            const SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _buildActionButton(
+                  icon: Icons.edit,
+                  label: 'Профиль',
+                  color: Colors.blue,
+                  onTap: () => const ProfileDetails().launch(context),
+                ),
+                _buildActionButton(
+                  icon: Icons.dashboard,
+                  label: 'Дашборд',
+                  color: Colors.green,
+                  onTap: () => const DashboardScreen().launch(context),
+                ),
+                _buildActionButton(
+                  icon: Icons.subscriptions,
+                  label: 'Подписка',
+                  color: Colors.orange,
+                  onTap: () => const PackageScreen().launch(context),
                               ),
                             ],
                           ),
                         ],
-                      );
-                    }, error: (e, stack) {
-                      return Text(e.toString());
-                    }, loading: () {
-                      return const HomeScreenAppBarShimmer();
-                    }),
-                  ),
-                ),
-                ListTile(
-                  title: Text(
-                    lang.S.of(context).profile,
+        ),
+        error: (e, stack) => _buildErrorView(e.toString()),
+        loading: () => const HomeScreenAppBarShimmer(),
+      ),
+    );
+  }
+
+  Widget _buildActionButton({
+    required IconData icon,
+    required String label,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        decoration: BoxDecoration(
+          color: color.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: color.withOpacity(0.3)),
+        ),
+        child: Column(
+          children: [
+            Icon(icon, color: color, size: 24),
+            const SizedBox(height: 4),
+            Text(
+              label,
+              style: TextStyle(
+                color: color,
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildQuickSettings() {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Быстрые настройки',
                     style: GoogleFonts.poppins(
-                      color: Colors.black,
-                      fontSize: 16.0,
-                    ),
-                  ),
-                  onTap: () {
-                    const ProfileDetails().launch(context);
-                  },
-                  leading: SvgPicture.asset('assets/profile.svg',height: 36,width: 36,),
-                  trailing: const Icon(
-                    Icons.arrow_forward_ios,
-                    color: kGreyTextColor,
-                    size: 20,
-                  ),
-                ),
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16),
-                  child: Divider(
-                    thickness: 1.0,
-                    height: 1,
-                    color: kBorderColorTextField,
-                  ),
-                ),
-                ListTile(
-                  title: Text(
-                    lang.S.of(context).printing,
-                    style: GoogleFonts.poppins(
-                      color: Colors.black,
-                      fontSize: 16.0,
-                    ),
-                  ),
-                  leading: SvgPicture.asset('assets/print.svg',height: 36,width: 36,),
-                  trailing: Transform.scale(
-                    scale: 0.7,
-                    child: SizedBox(
-                      height: 22,
-                      width: 40,
-                      child: Switch.adaptive(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.grey[800],
+            ),
+          ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Expanded(
+                child: _buildQuickSettingCard(
+                  title: 'Печать',
+                  subtitle: 'Включить печать чеков',
+                  icon: Icons.print,
+                  color: Colors.blue,
                         value: isPrintEnable,
-                        onChanged: (bool value) async {
+                  onChanged: (value) async {
                           final prefs = await SharedPreferences.getInstance();
                           await prefs.setBool('isPrintEnable', value);
                           setState(() {
@@ -188,225 +403,532 @@ class _SettingScreenState extends State<SettingScreen> {
                         },
                       ),
                     ),
-                  ),
-                ),
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16),
-                  child: Divider(
-                    thickness: 1.0,
-                    height: 1,
-                    color: kBorderColorTextField,
-                  ),
-                ),
-
-                ///_________subscription_____________________________________________________
-                ListTile(
-                  title: Text(
-                    lang.S.of(context).subscription,
-                    style: GoogleFonts.poppins(
-                      color: Colors.black,
-                      fontSize: 16.0,
-                    ),
-                  ),
-                  onTap: () {
-                    const PackageScreen().launch(context);
+              const SizedBox(width: 12),
+              Expanded(
+                child: _buildQuickSettingCard(
+                  title: 'Уведомления',
+                  subtitle: 'Push уведомления',
+                  icon: Icons.notifications,
+                  color: Colors.green,
+                  value: isPushNotifications,
+                  onChanged: (value) {
+                    setState(() {
+                      isPushNotifications = value;
+                    });
                   },
-                  leading: SvgPicture.asset('assets/subscription.svg',height: 36,width: 36,),
-                  trailing: const Icon(
-                    Icons.arrow_forward_ios,
-                    color: kGreyTextColor,
-                    size: 18,
-                  ),
                 ),
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16),
-                  child: Divider(
-                    thickness: 1.0,
-                    height: 1,
-                    color: kBorderColorTextField,
-                  ),
-                ),
-
-                ///_________DashBoard_____________________________________________________
-                ListTile(
-                  title: Text(
-                    lang.S.of(context).dashboard,
-                   // 'Dashboard',
-                    style: GoogleFonts.poppins(
-                      color: Colors.black,
-                      fontSize: 16.0,
-                    ),
-                  ),
-                  onTap: () {
-                    const DashboardScreen().launch(context);
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: _buildQuickSettingCard(
+                  title: 'Автосинх',
+                  subtitle: 'Автоматическая синхронизация',
+                  icon: Icons.sync,
+                  color: Colors.orange,
+                  value: isAutoSync,
+                  onChanged: (value) {
+                    setState(() {
+                      isAutoSync = value;
+                    });
                   },
-                  leading: SvgPicture.asset('assets/dashboard.svg',height: 36,width: 36,),
-                  trailing: const Icon(
-                    Icons.arrow_forward_ios,
-                    color: kGreyTextColor,
-                    size: 18,
-                  ),
                 ),
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16),
-                  child: Divider(
-                    thickness: 1.0,
-                    height: 1,
-                    color: kBorderColorTextField,
-                  ),
-                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
 
-                ///___________user_role___________________________________________________________
-                ListTile(
-                  title: Text(
-                    lang.S.of(context).userRole,
-                    style: GoogleFonts.poppins(
-                      color: Colors.black,
-                      fontSize: 16.0,
-                    ),
-                  ),
-                  onTap: () {
-                    const UserRoleScreen().launch(context);
-                  },
-                  leading: SvgPicture.asset('assets/userRole.svg',height: 36,width: 36,),
-                  trailing: const Icon(
-                    Icons.arrow_forward_ios,
-                    color: kGreyTextColor,
-                    size: 18,
-                  ),
-                ).visible(businessInfo.value?.user?.role != 'staff'),
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16),
-                  child: Divider(
-                    thickness: 1.0,
-                    height: 1,
-                    color: kBorderColorTextField,
-                  ),
-                ),
+  Widget _buildQuickSettingCard({
+    required String title,
+    required String subtitle,
+    required IconData icon,
+    required Color color,
+    required bool value,
+    required ValueChanged<bool> onChanged,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(icon, color: color, size: 24),
+          ),
+          const SizedBox(height: 12),
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+              color: Colors.grey[800],
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 4),
+          Text(
+            subtitle,
+            style: TextStyle(
+              fontSize: 11,
+              color: Colors.grey[600],
+            ),
+            textAlign: TextAlign.center,
+            maxLines: 2,
+          ),
+          const SizedBox(height: 12),
+          Transform.scale(
+            scale: 0.8,
+            child: Switch.adaptive(
+              value: value,
+              onChanged: onChanged,
+              activeColor: color,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
-                ///____________Currency________________________________________________
-                ListTile(
-                  onTap: () async {
-                    await const CurrencyScreen().launch(context);
-                    setState(() {});
-                  },
-                  title: Text(
-                    lang.S.of(context).currency,
+  Widget _buildMainSettings() {
+    return Container(
+      margin: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Основные настройки',
                     style: GoogleFonts.poppins(
-                      color: Colors.black,
-                      fontSize: 16.0,
-                    ),
-                  ),
-                  leading: SvgPicture.asset('assets/currency.svg',height: 36,width: 36,),
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.grey[800],
+            ),
+          ),
+          const SizedBox(height: 16),
+          _buildSettingsCard(
+            title: 'Язык',
+            subtitle: 'Выберите язык приложения',
+            icon: Icons.language,
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        '($currency)',
+                  selectedLanguage,
                         style: GoogleFonts.poppins(
-                          color: Colors.black,
-                          fontSize: 16.0,
-                        ),
-                      ),
-                      const SizedBox(
-                        width: 4.0,
-                      ),
-                      const Icon(Icons.arrow_forward_ios,color: kGreyTextColor,size: 18,),
-                    ],
+                    color: Colors.grey[600],
+                    fontSize: 14,
                   ),
                 ),
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16),
-                  child: Divider(
-                    thickness: 1.0,
-                    height: 1,
-                    color: kBorderColorTextField,
-                  ),
-                ),
-
-                ///_____________________________________________________________________________language
-                ListTile(
-                  title: Text(
-                    lang.S.of(context).selectLang,
-                    style: GoogleFonts.poppins(
-                      color: Colors.black,
-                      fontSize: 16.0,
-                    ),
-                  ),
+                const Icon(Icons.arrow_forward_ios, color: Colors.grey, size: 16),
+              ],
+            ),
                   onTap: () => Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) => const SelectLanguage(),
                     ),
                   ),
-                  leading: SvgPicture.asset('assets/language.svg',height: 36,width: 36,),
-                  trailing: const Icon(
-                    Icons.arrow_forward_ios,
-                    color: kGreyTextColor,
-                    size: 18,
-                  ),
-                ),
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16),
-                  child: Divider(
-                    thickness: 1.0,
-                    height: 1,
-                    color: kBorderColorTextField,
-                  ),
-                ),
+          ),
+          const SizedBox(height: 12),
+                     _buildSettingsCard(
+             title: 'Валюта',
+             subtitle: 'Выберите валюту для расчетов',
+             icon: Icons.attach_money,
+             trailing: Row(
+               mainAxisSize: MainAxisSize.min,
+               children: [
+                 Text(
+                   dropdownValue ?? '\$ (US Dollar)',
+                   style: GoogleFonts.poppins(
+                     color: Colors.grey[600],
+                     fontSize: 14,
+                   ),
+                 ),
+                 const Icon(Icons.arrow_forward_ios, color: Colors.grey, size: 16),
+               ],
+             ),
+             onTap: () async {
+               await const CurrencyScreen().launch(context);
+               setState(() {});
+             },
+           ),
+          const SizedBox(height: 12),
+          _buildSettingsCard(
+            title: 'Роли пользователей',
+            subtitle: 'Управление ролями и правами',
+            icon: Icons.people,
+            trailing: const Icon(Icons.arrow_forward_ios, color: Colors.grey, size: 16),
+            onTap: () => const UserRoleScreen().launch(context),
+          ),
+        ],
+      ),
+    );
+  }
 
-                ///__________log_Out_______________________________________________________________
-                ListTile(
-                  title: Text(
-                    lang.S.of(context).logOut,
+  Widget _buildAdvancedSettings() {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Расширенные настройки',
+            style: GoogleFonts.poppins(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.grey[800],
+            ),
+          ),
+          const SizedBox(height: 16),
+          _buildSettingsCard(
+            title: 'Внешний вид',
+            subtitle: 'Темная тема и настройки интерфейса',
+            icon: Icons.palette,
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Switch.adaptive(
+                  value: isDarkMode,
+                  onChanged: (value) {
+                    setState(() {
+                      isDarkMode = value;
+                    });
+                  },
+                  activeColor: Colors.purple,
+                ),
+                const SizedBox(width: 8),
+                const Icon(Icons.arrow_forward_ios, color: Colors.grey, size: 16),
+              ],
+            ),
+            onTap: () => _showAppearanceSettings(),
+          ),
+          const SizedBox(height: 12),
+          _buildSettingsCard(
+            title: 'Безопасность',
+            subtitle: 'Биометрия и двухфакторная аутентификация',
+            icon: Icons.security,
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Switch.adaptive(
+                  value: isBiometricAuth,
+                  onChanged: (value) {
+                    setState(() {
+                      isBiometricAuth = value;
+                    });
+                  },
+                  activeColor: Colors.red,
+                ),
+                const SizedBox(width: 8),
+                const Icon(Icons.arrow_forward_ios, color: Colors.grey, size: 16),
+              ],
+            ),
+            onTap: () => _showSecuritySettings(),
+          ),
+          const SizedBox(height: 12),
+          _buildSettingsCard(
+            title: 'Данные и хранилище',
+            subtitle: 'Экспорт, импорт и очистка данных',
+            icon: Icons.storage,
+            trailing: const Icon(Icons.arrow_forward_ios, color: Colors.grey, size: 16),
+            onTap: () => _showDataSettings(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSupportSection() {
+    return Container(
+      margin: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Поддержка и информация',
                     style: GoogleFonts.poppins(
-                      color: Colors.black,
-                      fontSize: 16.0,
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.grey[800],
+            ),
+          ),
+          const SizedBox(height: 16),
+          _buildSettingsCard(
+            title: 'Помощь',
+            subtitle: 'Руководства и FAQ',
+            icon: Icons.help_outline,
+            trailing: const Icon(Icons.arrow_forward_ios, color: Colors.grey, size: 16),
+            onTap: () => _showHelpDialog(),
+          ),
+          const SizedBox(height: 12),
+          _buildSettingsCard(
+            title: 'О приложении',
+            subtitle: 'Версия и информация',
+            icon: Icons.info_outline,
+                         trailing: Text(
+               'POSPro V-1.0.2',
+               style: GoogleFonts.poppins(
+                 color: Colors.grey[600],
+                 fontSize: 14,
+               ),
+             ),
+            onTap: () => _showAboutDialog(),
+          ),
+          const SizedBox(height: 12),
+          _buildSettingsCard(
+            title: 'Выйти',
+            subtitle: 'Выйти из аккаунта',
+            icon: Icons.logout,
+            trailing: const Icon(Icons.arrow_forward_ios, color: Colors.grey, size: 16),
+            onTap: () => _showLogoutDialog(),
+            isDestructive: true,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSettingsCard({
+    required String title,
+    required String subtitle,
+    required IconData icon,
+    required Widget trailing,
+    required VoidCallback onTap,
+    bool isDestructive = false,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 10,
+              offset: const Offset(0, 5),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: isDestructive
+                    ? Colors.red.withOpacity(0.1)
+                    : Theme.of(context).primaryColor.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(
+                icon,
+                color: isDestructive
+                    ? Colors.red
+                    : Theme.of(context).primaryColor,
+                size: 20,
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: isDestructive ? Colors.red : Colors.grey[800],
                     ),
                   ),
-                  onTap: () async {
-                    ref.invalidate(businessInfoProvider);
-                    EasyLoading.show(status:
-                        lang.S.of(context).logOut,
-                    //'Log out'
-                    );
-                    LogOutRepo repo = LogOutRepo();
-                    await repo.signOutApi(context: context, ref: ref);
-                  },
-                  leading: SvgPicture.asset('assets/logout.svg',height: 36,width: 36,),
-                  trailing: const Icon(
-                    Icons.arrow_forward_ios,
-                    color: kGreyTextColor,
-                    size: 18,
-                  ),
-                ),
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16),
-                  child: Divider(
-                    thickness: 1.0,
-                    height: 1,
-                    color: kBorderColorTextField,
-                  ),
-                ),
-                Row(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Text(
-                        'POSPro V-$appVersion',
-                        style: GoogleFonts.poppins(
-                          color: kGreyTextColor,
-                          fontSize: 16.0,
-                        ),
+                  const SizedBox(height: 2),
+                  Text(
+                    subtitle,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey[600],
                       ),
                     ),
                   ],
                 ),
+            ),
+            trailing,
               ],
             ),
           ),
         );
-      }),
+  }
+
+  Widget _buildErrorView(String error) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        children: [
+          Icon(
+            Icons.error_outline,
+            size: 60,
+            color: Colors.red.withOpacity(0.7),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'Ошибка загрузки',
+            style: GoogleFonts.poppins(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.grey[800],
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            error,
+            style: GoogleFonts.poppins(
+              fontSize: 14,
+              color: Colors.grey[600],
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Методы для диалогов
+  void _refreshSettings() {
+    setState(() {});
+    EasyLoading.showSuccess('Настройки обновлены');
+  }
+
+  void _showHelpDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Помощь'),
+        content: const Text('Руководство пользователя и часто задаваемые вопросы будут добавлены'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showAppearanceSettings() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Настройки внешнего вида'),
+        content: const Text('Настройки темы и интерфейса будут добавлены'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showSecuritySettings() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Настройки безопасности'),
+        content: const Text('Настройки биометрии и двухфакторной аутентификации будут добавлены'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showDataSettings() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Настройки данных'),
+        content: const Text('Настройки экспорта, импорта и очистки данных будут добавлены'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showAboutDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('О приложении'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+                     children: [
+             Text('POSPro - Профессиональная система управления торговлей'),
+             const SizedBox(height: 16),
+             Text('Версия: 1.0.2'),
+             Text('Сборка: 4'),
+             Text('Дата: ${DateTime.now().year}'),
+           ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showLogoutDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Выйти'),
+        content: const Text('Вы уверены, что хотите выйти из приложения?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Отмена'),
+          ),
+          TextButton(
+            onPressed: () async {
+              Navigator.pop(context);
+              if (currentRef != null) {
+                // currentRef.invalidate(businessInfoProvider);
+                EasyLoading.show(status: lang.S.of(context).logOut);
+                LogOutRepo repo = LogOutRepo();
+                // await repo.signOutApi(context: context, ref: currentRef);
+              }
+            },
+            child: const Text('Выйти'),
+          ),
+        ],
+      ),
     );
   }
 }

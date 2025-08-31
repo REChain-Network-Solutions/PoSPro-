@@ -13,7 +13,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../Repository/API/business_info_repo.dart';
 import '../../currency.dart';
 import '../Home/home.dart';
-import '../Home/home_screen.dart';
+
 import '../language/language_provider.dart';
 
 class SplashScreen extends StatefulWidget {

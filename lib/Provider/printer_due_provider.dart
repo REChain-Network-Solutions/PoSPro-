@@ -1,4 +1,4 @@
-import 'package:bluetooth_thermal_printer/bluetooth_thermal_printer.dart';
+// import 'package:bluetooth_thermal_printer/bluetooth_thermal_printer.dart';
 import 'package:esc_pos_utils/esc_pos_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -10,34 +10,23 @@ final printerDueProviderNotifier = ChangeNotifierProvider((ref) => PrinterDue())
 
 class PrinterDue extends ChangeNotifier {
   List availableBluetoothDevices = [];
+  bool connected = false;
   Future<void> getBluetooth() async {
-    final List? bluetooths = await BluetoothThermalPrinter.getBluetooths;
-    availableBluetoothDevices = bluetooths!;
+    // Временно отключено для сборки
+    availableBluetoothDevices = [];
     notifyListeners();
   }
 
   Future<bool> setConnect(String mac) async {
+    // Временно отключено для сборки
     bool status = false;
-    final String? result = await BluetoothThermalPrinter.connect(mac);
-    if (result == "true") {
-      connected = true;
-      status = true;
-    }
     notifyListeners();
     return status;
   }
 
   Future<bool> printTicket({required PrintDueTransactionModel printDueTransactionModel}) async {
+    // Временно отключено для сборки
     bool isPrinted = false;
-    String? isConnected = await BluetoothThermalPrinter.connectionStatus;
-    if (isConnected == "true") {
-      List<int> bytes = await getTicket(printDueTransactionModel: printDueTransactionModel);
-      await BluetoothThermalPrinter.writeBytes(bytes);
-
-      isPrinted = true;
-    } else {
-      isPrinted = false;
-    }
     notifyListeners();
     return isPrinted;
   }

@@ -36,18 +36,22 @@ List<GridItems> getFreeIcons({required BuildContext context}) {
       icon: 'assets/expense.svg',
       route: 'Expense',
     ),
-    // GridItems(
-    //   title: 'Delivery',
-    //   icon: 'images/delivery.png',
-    // ),
-    // GridItems(
-    //   title: 'Calculator',
-    //   icon: 'images/calculator.png',
-    // ),
-    // GridItems(
-    //   title: 'Expense',
-    //   icon: 'images/expenses.png',
-    // )
+    // Новые функции для бесплатного плана
+    GridItems(
+      title: 'Analytics',
+      icon: 'assets/dashboard.svg',
+      route: 'Analytics',
+    ),
+    GridItems(
+      title: 'Notifications',
+      icon: 'assets/notifications.svg',
+      route: 'Notifications',
+    ),
+    GridItems(
+      title: 'Settings',
+      icon: 'assets/setting.svg',
+      route: 'Settings',
+    ),
   ];
   return freeIcons;
 }
@@ -114,7 +118,28 @@ List<GridItems> businessIcons = [
     title: 'Barcode',
     icon: 'images/barcodescan.png',
     route: 'Barcode',
-  )
+  ),
+  // Новые функции для бизнес-плана
+  GridItems(
+    title: 'Employee Management',
+    icon: 'assets/userRole.svg',
+    route: 'Employee Management',
+  ),
+  GridItems(
+    title: 'Advanced Analytics',
+    icon: 'assets/dashboard.svg',
+    route: 'Advanced Analytics',
+  ),
+  GridItems(
+    title: 'API Integration',
+    icon: 'assets/api.svg',
+    route: 'API Integration',
+  ),
+  GridItems(
+    title: 'Backup & Sync',
+    icon: 'assets/backup.svg',
+    route: 'Backup & Sync',
+  ),
 ];
 
 List<GridItems> enterpriseIcons = [
@@ -148,29 +173,35 @@ List<GridItems> enterpriseIcons = [
     icon: 'images/lossProfit.png',
     route: 'Loss&Profit',
   ),
+  // Новые функции для enterprise-плана
   GridItems(
-    title: 'Income',
-    icon: 'images/income.png',
-    route: 'Income',
+    title: 'Multi-Branch Management',
+    icon: 'assets/branch.svg',
+    route: 'Multi-Branch Management',
   ),
   GridItems(
-    title: 'OnlineOrder',
-    icon: 'images/onlineorder.png',
-    route: 'OnlineOrder',
+    title: 'Advanced Security',
+    icon: 'assets/security.svg',
+    route: 'Advanced Security',
   ),
   GridItems(
-    title: 'UserRole',
-    icon: 'images/userrole.png',
-    route: 'UserRole',
+    title: 'Custom Integrations',
+    icon: 'assets/integration.svg',
+    route: 'Custom Integrations',
   ),
   GridItems(
-    title: 'Backup',
-    icon: 'images/backup.png',
-    route: 'Backup',
+    title: 'White Label Solution',
+    icon: 'assets/whitelabel.svg',
+    route: 'White Label Solution',
   ),
   GridItems(
-    title: 'Return',
-    icon: 'images/return.png',
-    route: 'Return',
-  )
+    title: 'Priority Support',
+    icon: 'assets/support.svg',
+    route: 'Priority Support',
+  ),
+  GridItems(
+    title: 'Advanced Reporting',
+    icon: 'assets/reports.svg',
+    route: 'Advanced Reporting',
+  ),
 ];

@@ -30,7 +30,7 @@ const String onboard1 = 'images/onbord1.png';
 const String onboard2 = 'images/onbord2.png';
 const String onboard3 = 'images/onbord3.png';
 const String logo = 'images/logo.png';
-const String appsName = 'POSpro';
+const String appsName = 'PosPro';
 
 const kButtonDecoration = BoxDecoration(
   borderRadius: BorderRadius.all(
@@ -135,7 +135,7 @@ class PrimaryButton extends StatelessWidget {
       width: double.infinity,
       child: ElevatedButton(
         onPressed: onPressed,
-        style: const ButtonStyle(backgroundColor: WidgetStatePropertyAll(kMainColor)),
+        style: const ButtonStyle(backgroundColor: MaterialStatePropertyAll(kMainColor)),
         child: Text(
           text,
           style: textTheme.labelLarge,

@@ -16,6 +16,7 @@ import '../../constant.dart';
 import '../../model/business_info_model.dart' as business;
 import '../subscription/package_screen.dart';
 import 'Provider/banner_provider.dart';
+import '../../navigation/app_routes.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -859,6 +860,7 @@ class HomeGridCards extends StatefulWidget {
 
 class _HomeGridCardsState extends State<HomeGridCards> {
   bool checkPermission({required String item}) {
+    // Проверяем стандартные разрешения
     if (item == 'Sales' && (widget.visibility?.salePermission ?? true)) {
       return true;
     } else if (item == 'Parties' && (widget.visibility?.partiesPermission ?? true)) {
@@ -882,6 +884,27 @@ class _HomeGridCardsState extends State<HomeGridCards> {
     } else if (item == 'Expense' && (widget.visibility?.addExpensePermission ?? true)) {
       return true;
     }
+    
+    // Новые функции - для бесплатного плана всегда доступны
+    if (item == 'Analytics' || item == 'Notifications' || item == 'Settings') {
+      return true;
+    }
+    
+    // Для бизнес-плана проверяем дополнительные разрешения
+    if (item == 'Employee Management' || item == 'Advanced Analytics' || 
+        item == 'API Integration' || item == 'Backup & Sync') {
+      // Здесь можно добавить проверку бизнес-плана
+      return true;
+    }
+    
+    // Для enterprise-плана проверяем расширенные разрешения
+    if (item == 'Multi-Branch Management' || item == 'Advanced Security' || 
+        item == 'Custom Integrations' || item == 'White Label Solution' || 
+        item == 'Priority Support' || item == 'Advanced Reporting') {
+      // Здесь можно добавить проверку enterprise-плана
+      return true;
+    }
+    
     return false;
   }
 
@@ -892,7 +915,38 @@ class _HomeGridCardsState extends State<HomeGridCards> {
       return GestureDetector(
         onTap: () async {
           if (checkPermission(item: widget.gridItems.route)) {
-            Navigator.of(context).pushNamed('/${widget.gridItems.route}');
+            // Используем новые маршруты для новых функций
+            String route = widget.gridItems.route;
+            if (route == 'Analytics') {
+              Navigator.of(context).pushNamed(AppRoutes.analytics);
+            } else if (route == 'Notifications') {
+              Navigator.of(context).pushNamed(AppRoutes.notifications);
+            } else if (route == 'Settings') {
+              Navigator.of(context).pushNamed(AppRoutes.settings);
+            } else if (route == 'Employee Management') {
+              Navigator.of(context).pushNamed(AppRoutes.employeeManagement);
+            } else if (route == 'Advanced Analytics') {
+              Navigator.of(context).pushNamed(AppRoutes.advancedAnalytics);
+            } else if (route == 'API Integration') {
+              Navigator.of(context).pushNamed(AppRoutes.apiIntegration);
+            } else if (route == 'Backup & Sync') {
+              Navigator.of(context).pushNamed(AppRoutes.backupSync);
+            } else if (route == 'Multi-Branch Management') {
+              Navigator.of(context).pushNamed(AppRoutes.multiBranchManagement);
+            } else if (route == 'Advanced Security') {
+              Navigator.of(context).pushNamed(AppRoutes.advancedSecurity);
+            } else if (route == 'Custom Integrations') {
+              Navigator.of(context).pushNamed(AppRoutes.customIntegrations);
+            } else if (route == 'White Label Solution') {
+              Navigator.of(context).pushNamed(AppRoutes.whiteLabelSolution);
+            } else if (route == 'Priority Support') {
+              Navigator.of(context).pushNamed(AppRoutes.prioritySupport);
+            } else if (route == 'Advanced Reporting') {
+              Navigator.of(context).pushNamed(AppRoutes.advancedReporting);
+            } else {
+              // Для старых функций используем старую навигацию
+              Navigator.of(context).pushNamed('/${widget.gridItems.route}');
+            }
           } else {
             EasyLoading.showError('Permission not granted!');
           }

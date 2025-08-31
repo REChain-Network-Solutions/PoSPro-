@@ -20,7 +20,7 @@ class RegisterScreen extends StatefulWidget {
   State<RegisterScreen> createState() => _RegisterScreenState();
 }
 
-class _RegisterScreenState extends State<RegisterScreen> {
+class _RegisterScreenState extends State<RegisterScreen> with TickerProviderStateMixin {
   bool showPass1 = true;
   bool showPass2 = true;
   GlobalKey<FormState> globalKey = GlobalKey<FormState>();
@@ -32,6 +32,89 @@ class _RegisterScreenState extends State<RegisterScreen> {
   late String password;
   late String passwordConfirmation;
 
+  // Animation controllers
+  late AnimationController _fadeController;
+  late AnimationController _slideController;
+  late AnimationController _scaleController;
+  late AnimationController _pulseController;
+
+  // Animations
+  late Animation<double> _fadeAnimation;
+  late Animation<Offset> _slideAnimation;
+  late Animation<double> _scaleAnimation;
+  late Animation<double> _pulseAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeAnimations();
+  }
+
+  void _initializeAnimations() {
+    _fadeController = AnimationController(
+      duration: const Duration(milliseconds: 800),
+      vsync: this,
+    );
+    _slideController = AnimationController(
+      duration: const Duration(milliseconds: 600),
+      vsync: this,
+    );
+    _scaleController = AnimationController(
+      duration: const Duration(milliseconds: 500),
+      vsync: this,
+    );
+    _pulseController = AnimationController(
+      duration: const Duration(milliseconds: 2000),
+      vsync: this,
+    );
+
+    _fadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(
+      parent: _fadeController,
+      curve: Curves.easeInOut,
+    ));
+
+    _slideAnimation = Tween<Offset>(
+      begin: const Offset(0, 0.3),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(
+      parent: _slideController,
+      curve: Curves.easeOutCubic,
+    ));
+
+    _scaleAnimation = Tween<double>(
+      begin: 0.8,
+      end: 1.0,
+    ).animate(CurvedAnimation(
+      parent: _scaleController,
+      curve: Curves.elasticOut,
+    ));
+
+    _pulseAnimation = Tween<double>(
+      begin: 1.0,
+      end: 1.05,
+    ).animate(CurvedAnimation(
+      parent: _pulseController,
+      curve: Curves.easeInOut,
+    ));
+
+    _fadeController.forward();
+    _slideController.forward();
+    _scaleController.forward();
+    _pulseController.repeat(reverse: true);
+  }
+
+  @override
+  void dispose() {
+    _fadeController.dispose();
+    _slideController.dispose();
+    _scaleController.dispose();
+    _pulseController.dispose();
+    super.dispose();
+  }
+
   bool validateAndSave() {
     final form = globalKey.currentState;
     if (form!.validate() && givenPassword == givenPassword2) {
@@ -42,181 +125,497 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        body: Consumer(builder: (context, ref, child) {
-          return Center(
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Image.asset('images/logoandname.png'),
-                  const SizedBox(
-                    height: 30.0,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: Form(
-                      key: globalKey,
-                      child: Column(
-                        children: [
-                          const SizedBox(height: 20),
-                          TextFormField(
-                            keyboardType: TextInputType.emailAddress,
-                            decoration: InputDecoration(
-                              border: const OutlineInputBorder(),
-                              labelText: lang.S.of(context).emailText,
-                              hintText: lang.S.of(context).enterYourEmailAddress,
-                            ),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                               // return 'Email can\'n be empty';
-                                return lang.S.of(context).emailCannotBeEmpty;
-                              } else if (!value.contains('@')) {
-                                //return 'Please enter a valid email';
-                                return lang.S.of(context).pleaseEnterAValidEmail;
-                              }
-                              return null;
-                            },
-                            onSaved: (value) {
-                              email = value!;
-                            },
-                          ),
-                          const SizedBox(height: 20),
-                          TextFormField(
-                            keyboardType: TextInputType.text,
-                            obscureText: showPass1,
-                            decoration: InputDecoration(
-                              border: const OutlineInputBorder(),
-                              labelText: lang.S.of(context).password,
-                              hintText: lang.S.of(context).pleaseEnterAPassword,
-                              suffixIcon: IconButton(
-                                onPressed: () {
-                                  setState(() {
-                                    showPass1 = !showPass1;
-                                  });
-                                },
-                                icon: Icon(showPass1 ? Icons.visibility_off : Icons.visibility),
-                              ),
-                            ),
-                            onChanged: (value) {
-                              givenPassword = value;
-                            },
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                //return 'Password can\'t be empty';
-                                return lang.S.of(context).passwordCannotBeEmpty;
-                              } else if (value.length < 4) {
-                                //return 'Please enter a bigger password';
-                                return lang.S.of(context).pleaseEnterABiggerPassword;
-                              } else if (value.length < 4) {
-                                //return 'Please enter a bigger password';
-                                return lang.S.of(context).pleaseEnterABiggerPassword;
-                              }
-                              return null;
-                            },
-                            onSaved: (value) {
-                              password = value!;
-                            },
-                          ),
-                          const SizedBox(height: 20),
-                          TextFormField(
-                            keyboardType: TextInputType.emailAddress,
-                            obscureText: showPass2,
-                            decoration: InputDecoration(
-                              border: const OutlineInputBorder(),
-                              labelText: lang.S.of(context).confirmPass,
-                              hintText: lang.S.of(context).pleaseEnterAConfirmPassword,
-                              suffixIcon: IconButton(
-                                onPressed: () {
-                                  setState(() {
-                                    showPass2 = !showPass2;
-                                  });
-                                },
-                                icon: Icon(showPass2 ? Icons.visibility_off : Icons.visibility),
-                              ),
-                            ),
-                            onChanged: (value) {
-                              givenPassword2 = value;
-                            },
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                //return 'Password can\'t be empty';
-                                return lang.S.of(context).passwordCannotBeEmpty;
-                              } else if (value.length < 4) {
-                               // return 'Please enter a bigger password';
-                                return lang.S.of(context).pleaseEnterABiggerPassword;
-                              } else if (givenPassword != givenPassword2) {
-                                //return 'Password Not mach';
-                                return lang.S.of(context).passwordsDoNotMatch;
-                              }
-                              return null;
-                            },
-                          ),
-                        ],
-                      ),
+        backgroundColor: kWhite,
+        body: CustomScrollView(
+          slivers: [
+            _buildSliverAppBar(),
+            SliverToBoxAdapter(
+              child: FadeTransition(
+                opacity: _fadeAnimation,
+                child: SlideTransition(
+                  position: _slideAnimation,
+                  child: Container(
+                    padding: const EdgeInsets.all(24),
+                    child: Column(
+                      children: [
+                        _buildLogoSection(),
+                        const SizedBox(height: 40),
+                        _buildWelcomeSection(),
+                        const SizedBox(height: 30),
+                        _buildFormSection(),
+                        const SizedBox(height: 30),
+                        _buildRegisterButton(),
+                        const SizedBox(height: 25),
+                        _buildLoginSection(),
+                        const SizedBox(height: 20),
+                        _buildPhoneAuthSection(),
+                      ],
                     ),
                   ),
-                  ButtonGlobalWithoutIcon(
-                    buttontext: lang.S.of(context).register,
-                    buttonDecoration: kButtonDecoration.copyWith(color: kMainColor),
-                    onPressed: () async {
-                      if (validateAndSave()) {
-                        RegisterRepo reg = RegisterRepo();
-                        if (await reg.registerRepo(email: email, context: context, password: password, confirmPassword: password))
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const ProfileSetup(),
-                              ));
-                        // auth.signUp(context);
-                      }
-                    },
-                    buttonTextColor: Colors.white,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        lang.S.of(context).haveAcc,
-                        style: GoogleFonts.poppins(color: kGreyTextColor, fontSize: 15.0),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          const LoginForm(
-                            isEmailLogin: true,
-                          ).launch(context);
-                          // Navigator.pushNamed(context, '/loginForm');
-                        },
-                        child: Text(
-                          lang.S.of(context).logIn,
-                          style: GoogleFonts.poppins(
-                            color: kMainColor,
-                            fontSize: 15.0,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      const PhoneAuth().launch(context);
-                    },
-                    child: Text(lang.S.of(context).loginWithPhone),
-                  ),
-                ],
+                ),
               ),
             ),
-          );
-        }),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSliverAppBar() {
+    return SliverAppBar(
+      expandedHeight: 120,
+      pinned: true,
+      backgroundColor: kMainColor,
+      flexibleSpace: FlexibleSpaceBar(
+        background: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                kMainColor,
+                kMainColor.withOpacity(0.8),
+                kMainColor.withOpacity(0.6),
+              ],
+            ),
+          ),
+          child: Center(
+            child: ScaleTransition(
+              scale: _pulseAnimation,
+              child: Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: const Icon(
+                  Icons.person_add,
+                  size: 40,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ),
+        ),
+        title: const Text(
+          'Create Account',
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        centerTitle: true,
+      ),
+      elevation: 0,
+    );
+  }
+
+  Widget _buildLogoSection() {
+    return ScaleTransition(
+      scale: _scaleAnimation,
+      child: Container(
+        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          color: kMainColor.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: kMainColor.withOpacity(0.3),
+            width: 1,
+          ),
+        ),
+        child: Column(
+          children: [
+            Image.asset(
+              'images/logoandname.png',
+              height: 80,
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Account Registration',
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.grey[600],
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildWelcomeSection() {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            spreadRadius: 1,
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          Text(
+            'Join POSPro Today!',
+            style: GoogleFonts.poppins(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: kMainColor,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Create your account to start managing your business efficiently',
+            style: GoogleFonts.poppins(
+              fontSize: 14,
+              color: Colors.grey[600],
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFormSection() {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            spreadRadius: 1,
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Form(
+        key: globalKey,
+        child: Column(
+          children: [
+            _buildEmailField(),
+            const SizedBox(height: 20),
+            _buildPasswordField(),
+            const SizedBox(height: 20),
+            _buildConfirmPasswordField(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEmailField() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Email Address',
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: kMainColor,
+          ),
+        ),
+        const SizedBox(height: 12),
+        TextFormField(
+          keyboardType: TextInputType.emailAddress,
+          decoration: InputDecoration(
+            labelText: lang.S.of(context).emailText,
+            hintText: lang.S.of(context).enterYourEmailAddress,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(color: Colors.grey[300]!),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(color: Colors.grey[300]!),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: kMainColor, width: 2),
+            ),
+            filled: true,
+            fillColor: Colors.grey[50],
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            prefixIcon: Icon(
+              Icons.email_outlined,
+              color: Colors.grey[600],
+            ),
+          ),
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return lang.S.of(context).emailCannotBeEmpty;
+            } else if (!value.contains('@')) {
+              return lang.S.of(context).pleaseEnterAValidEmail;
+            }
+            return null;
+          },
+          onSaved: (value) {
+            email = value!;
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPasswordField() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Password',
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: kMainColor,
+          ),
+        ),
+        const SizedBox(height: 12),
+        TextFormField(
+          keyboardType: TextInputType.text,
+          obscureText: showPass1,
+          decoration: InputDecoration(
+            labelText: lang.S.of(context).password,
+            hintText: lang.S.of(context).pleaseEnterAPassword,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(color: Colors.grey[300]!),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(color: Colors.grey[300]!),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: kMainColor, width: 2),
+            ),
+            filled: true,
+            fillColor: Colors.grey[50],
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            prefixIcon: Icon(
+              Icons.lock_outline,
+              color: Colors.grey[600],
+            ),
+            suffixIcon: IconButton(
+              onPressed: () {
+                setState(() {
+                  showPass1 = !showPass1;
+                });
+              },
+              icon: Icon(
+                showPass1 ? Icons.visibility_off : Icons.visibility,
+                color: Colors.grey[600],
+              ),
+            ),
+          ),
+          onChanged: (value) {
+            givenPassword = value;
+          },
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return lang.S.of(context).passwordCannotBeEmpty;
+            } else if (value.length < 4) {
+              return lang.S.of(context).pleaseEnterABiggerPassword;
+            }
+            return null;
+          },
+          onSaved: (value) {
+            password = value!;
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildConfirmPasswordField() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Confirm Password',
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: kMainColor,
+          ),
+        ),
+        const SizedBox(height: 12),
+        TextFormField(
+          keyboardType: TextInputType.text,
+          obscureText: showPass2,
+          decoration: InputDecoration(
+            labelText: lang.S.of(context).confirmPass,
+            hintText: lang.S.of(context).pleaseEnterAConfirmPassword,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(color: Colors.grey[300]!),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(color: Colors.grey[300]!),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: kMainColor, width: 2),
+            ),
+            filled: true,
+            fillColor: Colors.grey[50],
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            prefixIcon: Icon(
+              Icons.lock_outline,
+              color: Colors.grey[600],
+            ),
+            suffixIcon: IconButton(
+              onPressed: () {
+                setState(() {
+                  showPass2 = !showPass2;
+                });
+              },
+              icon: Icon(
+                showPass2 ? Icons.visibility_off : Icons.visibility,
+                color: Colors.grey[600],
+              ),
+            ),
+          ),
+          onChanged: (value) {
+            givenPassword2 = value;
+          },
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return lang.S.of(context).passwordCannotBeEmpty;
+            } else if (value.length < 4) {
+              return lang.S.of(context).pleaseEnterABiggerPassword;
+            } else if (givenPassword != givenPassword2) {
+              return lang.S.of(context).passwordsDoNotMatch;
+            }
+            return null;
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildRegisterButton() {
+    return SizedBox(
+      width: double.infinity,
+      height: 50,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: kMainColor,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          elevation: 2,
+        ),
+        onPressed: () async {
+          if (validateAndSave()) {
+            RegisterRepo reg = RegisterRepo();
+            if (await reg.registerRepo(
+              email: email,
+              context: context,
+              password: password,
+              confirmPassword: password,
+            )) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const ProfileSetup(),
+                ),
+              );
+            }
+          }
+        },
+        child: Text(
+          lang.S.of(context).register,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLoginSection() {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.grey[50],
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.grey[200]!),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            lang.S.of(context).haveAcc,
+            style: GoogleFonts.poppins(
+              color: Colors.grey[600],
+              fontSize: 14.0,
+            ),
+          ),
+          const SizedBox(width: 8),
+          TextButton(
+            onPressed: () {
+              const LoginForm(
+                isEmailLogin: true,
+              ).launch(context);
+            },
+            child: Text(
+              lang.S.of(context).logIn,
+              style: GoogleFonts.poppins(
+                color: kMainColor,
+                fontSize: 14.0,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPhoneAuthSection() {
+    return Container(
+      width: double.infinity,
+      child: OutlinedButton.icon(
+        onPressed: () {
+          const PhoneAuth().launch(context);
+        },
+        icon: Icon(
+          Icons.phone,
+          color: kMainColor,
+          size: 18,
+        ),
+        label: Text(
+          lang.S.of(context).loginWithPhone,
+          style: GoogleFonts.poppins(
+            color: kMainColor,
+            fontSize: 14.0,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        style: OutlinedButton.styleFrom(
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          side: BorderSide(color: kMainColor.withOpacity(0.5)),
+        ),
       ),
     );
   }

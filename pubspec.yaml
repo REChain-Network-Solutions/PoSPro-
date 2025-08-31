@@ -15,10 +15,10 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 1.0.2+4
+version: 1.0.3+5
 
 environment:
-  sdk: ">=2.12.0 <3.0.0"
+  sdk: ">=3.0.0 <4.0.0"
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -33,42 +33,41 @@ dependencies:
   flutter_localizations:
     sdk: flutter
 
-
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.5
+  cupertino_icons: ^1.0.8
   google_fonts: ^6.2.1
   flutter_credit_card: ^4.0.1
   barcode_widget: ^2.0.2
   flutter_grid_button: ^2.0.0
-  image_picker: ^1.0.0
-  flutter_barcode_scanner: ^2.0.0
+  image_picker: ^1.0.7
+  mobile_scanner: ^3.5.6
   flutter_cart: ^0.0.7
   flutter_easyloading: ^3.0.5
   math_expressions: ^2.3.1
   modal_bottom_sheet: ^3.0.0
   platform: ^3.1.0
-  flutter_riverpod: ^2.3.2
+  flutter_riverpod: ^2.5.1
   shimmer: ^3.0.0
-  cached_network_image: ^3.2.1
-  url_launcher: ^6.1.5
+  cached_network_image: ^3.3.1
+  url_launcher: ^6.2.5
   flutter_feather_icons: ^2.0.0+1
-  bluetooth_thermal_printer: ^0.0.6
+  # flutter_bluetooth_printer: ^1.0.0  # Временно отключено для совместимости
   esc_pos_utils: ^1.1.0
   permission_handler: ^11.3.1
   in_app_update: ^4.0.1
-  shared_preferences: ^2.0.15
+  shared_preferences: ^2.2.2
   restart_app: ^1.2.1
   intl:
   pinput: ^5.0.0
   nb_utils: ^7.0.3
   youtube_player_flutter: ^9.0.1
   pdf: ^3.8.4
-  open_file: ^3.2.1
+  open_file: ^3.3.2
   date_time_format: ^2.0.1
   currency_picker: ^2.0.16
-  path_provider: ^2.0.14
-  provider: ^6.0.5
+  path_provider: ^2.1.2
+  provider: ^6.1.2
   http:
   internet_connection_checker: ^1.0.0+1
   flutter_pdfview: ^1.3.1
@@ -82,14 +81,69 @@ dependencies:
   circle_nav_bar: ^2.0.1+1ff
   webview_flutter: ^4.8.0
   fl_chart: ^0.69.0
+  
+  # New dependencies from MyModusFlutter
+  # UI & Animation
+  animations: ^2.0.8
+  flutter_staggered_grid_view: ^0.7.0
+  lottie: ^2.7.0
+  
+  # State Management
+  riverpod: ^2.4.9
+  
+  # Navigation
+  go_router: ^12.1.3
+  
+  # HTTP & API
+  dio: ^5.3.2
+  retrofit: ^4.0.3
+  
+  # Local Storage
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
+  flutter_secure_storage: ^9.0.0
+  
+  # JSON Serialization
+  json_annotation: ^4.9.0
+  
+  # Web3 & Blockchain
+  web3dart: ^2.7.2
+  
+  # Social Features
+  video_player: ^2.8.1
+  camera: ^0.10.5+9
+  
+  # Utils
+  package_info_plus: ^4.2.0
+  device_info_plus: ^9.1.1
+  
+  # HTML Parsing
+  html: ^0.15.4
+  
+  # File handling
+  drag_and_drop_lists: ^0.4.2
+  
+  # UI Components
+  photo_view: ^0.14.0
+  
+  # Logging
+  logger: ^2.0.2+1
+  
+  # Toast notifications
+  fluttertoast: ^8.2.4
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^4.0.0
+  flutter_lints: ^6.0.0
   change_app_package_name: ^1.1.0
-  icons_launcher:
-
+  icons_launcher: ^2.0.7
+  
+  # New dev dependencies from MyModusFlutter
+  build_runner: ^2.4.7
+  json_serializable: ^6.7.1
+  retrofit_generator: ^7.0.8
+  hive_generator: ^2.0.1
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -100,6 +154,10 @@ flutter:
   assets:
     - images/
     - assets/
+    - assets/images/
+    - assets/icons/
+    - assets/animations/
+    - assets/abi/
 
 flutter_intl:
   enabled: true

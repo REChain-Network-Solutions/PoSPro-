@@ -1,0 +1,2 @@
+This directory contains images for the PoSPro application.
+Images will be added here during development.

@@ -155,7 +155,7 @@ class _PurchaseListState extends State<PurchaseList> {
                     columnSpacing: 80,
                     horizontalMargin: 0,
                     headingRowColor:
-                        MaterialStateColor.resolveWith((states) => kDarkWhite),
+                        MaterialStateProperty.resolveWith((states) => kDarkWhite),
                     columns:  <DataColumn>[
                       DataColumn(
                         label: Text(
@@ -220,7 +220,7 @@ class _PurchaseListState extends State<PurchaseList> {
             DataTable(
               columnSpacing: 120,
               headingRowColor:
-                  MaterialStateColor.resolveWith((states) => kDarkWhite),
+                  MaterialStateProperty.resolveWith((states) => kDarkWhite),
               columns:  <DataColumn>[
                 DataColumn(
                   label: Text(

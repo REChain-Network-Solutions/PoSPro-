@@ -1,0 +1,2 @@
+This directory contains ABI (Application Binary Interface) files for smart contracts.
+ABI files will be added here during development.

@@ -4,7 +4,7 @@ import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:iconly/iconly.dart';
 import 'package:mobile_pos/Screens/DashBoard/dashboard.dart';
-import 'package:mobile_pos/Screens/Home/home_screen.dart';
+
 import 'package:mobile_pos/Screens/Report/reports.dart';
 import 'package:mobile_pos/Screens/Settings/settings_screen.dart';
 import 'package:mobile_pos/constant.dart';
@@ -25,7 +25,7 @@ class _HomeState extends State<Home> {
   bool isAlertSet = false;
   bool isNoInternet = false;
 
-  static const List<Widget> _widgetOptions = <Widget>[HomeScreen(), SalesContact(), Reports(), SettingScreen()];
+  static const List<Widget> _widgetOptions = <Widget>[DashboardScreen(), SalesContact(), Reports(), SettingScreen()];
 
   void _onItemTapped(int index) {
     setState(() {
@@ -136,7 +136,7 @@ class _HomeState extends State<Home> {
             tabIndex = v;
           },
           children: const [
-            HomeScreen(), DashboardScreen(), Reports(), SettingScreen()
+            DashboardScreen(), DashboardScreen(), Reports(), SettingScreen()
           ],
         ),
 

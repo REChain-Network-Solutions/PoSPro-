@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nb_utils/nb_utils.dart';
-import 'package:print_bluetooth_thermal/print_bluetooth_thermal.dart';
+// import 'package:print_bluetooth_thermal/print_bluetooth_thermal.dart';
 import 'package:mobile_pos/generated/l10n.dart' as lang;
 
 import '../Screens/Purchase/Model/purchase_transaction_model.dart';
@@ -14,21 +14,21 @@ import '../model/sale_transaction_model.dart';
 final thermalPrinterProvider = ChangeNotifierProvider((ref) => ThermalPrinter());
 
 class ThermalPrinter extends ChangeNotifier {
-  List<BluetoothInfo> availableBluetoothDevices = [];
+  List<dynamic> availableBluetoothDevices = [];
   Future<void> getBluetooth() async {
-    final List<BluetoothInfo> bluetooths = await PrintBluetoothThermal.pairedBluetooths;
-    availableBluetoothDevices = bluetooths;
-    notifyListeners();
+    // final List<BluetoothInfo> bluetooths = await PrintBluetoothThermal.pairedBluetooths;
+    // availableBluetoothDevices = bluetooths;
+    // notifyListeners();
   }
 
   Future<bool> setConnect(String mac) async {
     bool status = false;
-    final bool result = await PrintBluetoothThermal.connect(macPrinterAddress: mac);
-    if (result == true) {
-      connected = true;
-      status = true;
-    }
-    notifyListeners();
+    // final bool result = await PrintBluetoothThermal.connect(macPrinterAddress: mac);
+    // if (result == true) {
+    //   connected = true;
+    //   status = true;
+    // }
+    // notifyListeners();
     return status;
   }
 
@@ -36,8 +36,8 @@ class ThermalPrinter extends ChangeNotifier {
     return showDialog(
         context: context,
         builder: (_) {
-          return WillPopScope(
-            onWillPop: () async => false,
+          return PopScope(
+            canPop: false,
             child: Dialog(
               child: SizedBox(
                 child: Column(
@@ -50,16 +50,16 @@ class ThermalPrinter extends ChangeNotifier {
                       itemBuilder: (context1, index) {
                         return ListTile(
                           onTap: () async {
-                            BluetoothInfo select = availableBluetoothDevices[index];
-                            bool isConnect = await setConnect(select.macAdress);
-                            isConnect
-                                ? finish(context1)
-                                : toast(
-                                    lang.S.of(context1).tryAgain,
-                                    //'Try Again'
-                                  );
+                            // BluetoothInfo select = availableBluetoothDevices[index];
+                            // bool isConnect = await setConnect(select.macAdress);
+                            // isConnect
+                            //     ? finish(context1)
+                            //     : toast(
+                            //         lang.S.of(context1).tryAgain,
+                            //         //'Try Again'
+                            //       );
                           },
-                          title: Text(availableBluetoothDevices[index].name),
+                          title: Text('Device ${index + 1}'),
                           subtitle: Text(lang.S.of(context1).clickToConnect),
                         );
                       },
@@ -97,11 +97,11 @@ class ThermalPrinter extends ChangeNotifier {
 
   Future<bool> printSalesTicket({required PrintTransactionModel printTransactionModel, required List<SalesDetails>? productList}) async {
     bool isPrinted = false;
-    bool? isConnected = await PrintBluetoothThermal.connectionStatus;
+    bool? isConnected = false; // await PrintBluetoothThermal.connectionStatus;
     if (isConnected == true) {
       List<int> bytes = await getSalesTicket(printTransactionModel: printTransactionModel, productList: productList);
       if (productList!.isNotEmpty) {
-        await PrintBluetoothThermal.writeBytes(bytes);
+        // await PrintBluetoothThermal.writeBytes(bytes);
         EasyLoading.showSuccess('Successfully Printed');
       } else {
         toast('No Product Found');
@@ -289,11 +289,11 @@ class ThermalPrinter extends ChangeNotifier {
   ///__________Purchase________________
   Future<bool> printPurchaseThermalInvoice({required PrintPurchaseTransactionModel printTransactionModel, required List<Details>? productList}) async {
     bool isPrinted = false;
-    bool isConnected = await PrintBluetoothThermal.connectionStatus;
+    bool isConnected = false; // await PrintBluetoothThermal.connectionStatus;
     if (isConnected == true) {
       List<int> bytes = await getPurchaseTicket(printTransactionModel: printTransactionModel, productList: productList);
       if (productList!.isNotEmpty) {
-        await PrintBluetoothThermal.writeBytes(bytes);
+        // await PrintBluetoothThermal.writeBytes(bytes);
       } else {
         toast('No Product Found');
       }
@@ -453,10 +453,10 @@ class ThermalPrinter extends ChangeNotifier {
   ///_________Due________________________
   Future<bool> printDueTicket({required PrintDueTransactionModel printDueTransactionModel}) async {
     bool isPrinted = false;
-    bool? isConnected = await PrintBluetoothThermal.connectionStatus;
+    bool? isConnected = false; // await PrintBluetoothThermal.connectionStatus;
     if (isConnected == true) {
       List<int> bytes = await getDueTicket(printDueTransactionModel: printDueTransactionModel);
-      await PrintBluetoothThermal.writeBytes(bytes);
+              // await PrintBluetoothThermal.writeBytes(bytes);
 
       isPrinted = true;
     } else {
