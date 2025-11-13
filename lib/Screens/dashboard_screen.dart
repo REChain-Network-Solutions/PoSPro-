@@ -332,47 +332,66 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
           ),
         ),
         const SizedBox(height: 16),
-        GridView.count(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          crossAxisCount: 2,
-          crossAxisSpacing: 16,
-          mainAxisSpacing: 16,
-          childAspectRatio: 1.5,
-          children: [
-            _buildKPICard(
-              title: 'Товары',
-              value: '${stats['products']['total_products'] ?? 0}',
-              subtitle: 'Всего товаров',
-              icon: Icons.inventory,
-              color: Colors.blue,
-              trend: stats['products']['trend'] ?? 'stable',
-            ),
-            _buildKPICard(
-              title: 'Продажи',
-              value: '${stats['products']['total_products'] ?? 0}',
-              subtitle: 'За ${_getPeriodText(_selectedPeriod)}',
-              icon: Icons.shopping_cart,
-              color: Colors.green,
-              trend: 'increasing',
-            ),
-            _buildKPICard(
-              title: 'AI рекомендации',
-              value: '${stats['ai']['personal_recommendations_count'] ?? 0}',
-              subtitle: 'Персональных',
-              icon: Icons.psychology,
-              color: Colors.purple,
-              trend: stats['ai']['trend'] ?? 'stable',
-            ),
-            _buildKPICard(
-              title: 'Web3 активность',
-              value: '${stats['web3']['total_nfts'] ?? 0}',
-              subtitle: 'NFT токенов',
-              icon: Icons.token,
-              color: Colors.orange,
-              trend: 'increasing',
-            ),
-          ],
+        LayoutBuilder(
+          builder: (context, constraints) {
+            final screenWidth = constraints.maxWidth;
+            int crossAxisCount = 2;
+            double childAspectRatio = 1.5;
+
+            if (screenWidth >= 600) {
+              crossAxisCount = 3;
+              childAspectRatio = 1.2;
+            } else if (screenWidth >= 400) {
+              crossAxisCount = 2;
+              childAspectRatio = 1.4;
+            } else {
+              crossAxisCount = 1;
+              childAspectRatio = 2.0;
+            }
+
+            return GridView.count(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              crossAxisCount: crossAxisCount,
+              crossAxisSpacing: 16,
+              mainAxisSpacing: 16,
+              childAspectRatio: childAspectRatio,
+              children: [
+                _buildKPICard(
+                  title: 'Товары',
+                  value: '${stats['products']['total_products'] ?? 0}',
+                  subtitle: 'Всего товаров',
+                  icon: Icons.inventory,
+                  color: Colors.blue,
+                  trend: stats['products']['trend'] ?? 'stable',
+                ),
+                _buildKPICard(
+                  title: 'Продажи',
+                  value: '${stats['products']['total_products'] ?? 0}',
+                  subtitle: 'За ${_getPeriodText(_selectedPeriod)}',
+                  icon: Icons.shopping_cart,
+                  color: Colors.green,
+                  trend: 'increasing',
+                ),
+                _buildKPICard(
+                  title: 'AI рекомендации',
+                  value: '${stats['ai']['personal_recommendations_count'] ?? 0}',
+                  subtitle: 'Персональных',
+                  icon: Icons.psychology,
+                  color: Colors.purple,
+                  trend: stats['ai']['trend'] ?? 'stable',
+                ),
+                _buildKPICard(
+                  title: 'Web3 активность',
+                  value: '${stats['web3']['total_nfts'] ?? 0}',
+                  subtitle: 'NFT токенов',
+                  icon: Icons.token,
+                  color: Colors.orange,
+                  trend: 'increasing',
+                ),
+              ],
+            );
+          },
         ),
       ],
     );

@@ -12,6 +12,122 @@ import '../Screens/analytics_screen.dart';
 import '../Screens/website_integration_screen.dart';
 import '../constants/custom_icons.dart';
 
+// Кастомный скроллируемый BottomNavigationBar
+class ScrollableBottomNavigationBar extends StatefulWidget {
+  final int currentIndex;
+  final Function(int) onTap;
+  final List<BottomNavigationBarItem> items;
+
+  const ScrollableBottomNavigationBar({
+    Key? key,
+    required this.currentIndex,
+    required this.onTap,
+    required this.items,
+  }) : super(key: key);
+
+  @override
+  State<ScrollableBottomNavigationBar> createState() => _ScrollableBottomNavigationBarState();
+}
+
+class _ScrollableBottomNavigationBarState extends State<ScrollableBottomNavigationBar> {
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void didUpdateWidget(ScrollableBottomNavigationBar oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.currentIndex != oldWidget.currentIndex) {
+      _scrollToSelectedItem();
+    }
+  }
+
+  void _scrollToSelectedItem() {
+    if (_scrollController.hasClients) {
+      final screenWidth = MediaQuery.of(context).size.width;
+      final itemWidth = screenWidth / 5; // Предполагаем 5 видимых элементов
+      final targetOffset = widget.currentIndex * itemWidth - (screenWidth / 2) + (itemWidth / 2);
+
+      _scrollController.animateTo(
+        targetOffset.clamp(0, _scrollController.position.maxScrollExtent),
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isSmallScreen = screenWidth < 400;
+
+    return Container(
+      height: isSmallScreen ? 60 : 70,
+      decoration: BoxDecoration(
+        color: Theme.of(context).bottomNavigationBarTheme.backgroundColor ?? Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 8,
+            offset: const Offset(0, -2),
+          ),
+        ],
+      ),
+      child: SingleChildScrollView(
+        controller: _scrollController,
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          children: List.generate(widget.items.length, (index) {
+            final item = widget.items[index];
+            final isSelected = index == widget.currentIndex;
+
+            return GestureDetector(
+              onTap: () => widget.onTap(index),
+              child: Container(
+                width: isSmallScreen ? 60 : 70,
+                padding: EdgeInsets.symmetric(vertical: isSmallScreen ? 8 : 12),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Иконка с адаптивным размером
+                    Container(
+                      child: item.icon,
+                      transform: Matrix4.diagonal3Values(
+                        isSelected ? 1.1 : 1.0,
+                        isSelected ? 1.1 : 1.0,
+                        1.0,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    // Текст с адаптивным размером
+                    Text(
+                      item.label ?? '',
+                      style: TextStyle(
+                        color: isSelected
+                            ? Theme.of(context).primaryColor
+                            : Colors.grey,
+                        fontSize: isSmallScreen ? 9 : 10,
+                        fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                      ),
+                      textAlign: TextAlign.center,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }),
+        ),
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+}
+
 class MainScreen extends StatefulWidget {
   const MainScreen({Key? key}) : super(key: key);
 
@@ -77,63 +193,60 @@ class _MainScreenState extends State<MainScreen> {
           return _screens[index];
         },
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
+      bottomNavigationBar: ScrollableBottomNavigationBar(
         currentIndex: _currentIndex,
         onTap: _onTabTapped,
-        selectedItemColor: Theme.of(context).primaryColor,
-        unselectedItemColor: Colors.grey,
         items: [
           BottomNavigationBarItem(
-            icon: MyModusIconWidgets.home,
+            icon: MyModusIconWidgets.home(context),
             label: 'Главная',
           ),
           BottomNavigationBarItem(
-            icon: MyModusIconWidgets.fashion,
+            icon: MyModusIconWidgets.fashion(context),
             label: 'Мода',
           ),
           BottomNavigationBarItem(
-            icon: MyModusIconWidgets.marketplace,
+            icon: MyModusIconWidgets.marketplace(context),
             label: 'Маркетплейс',
           ),
           BottomNavigationBarItem(
-            icon: MyModusIconWidgets.ai,
+            icon: MyModusIconWidgets.ai(context),
             label: 'AI',
           ),
           BottomNavigationBarItem(
-            icon: MyModusIconWidgets.web3,
+            icon: MyModusIconWidgets.web3(context),
             label: 'Web3',
           ),
           BottomNavigationBarItem(
-            icon: MyModusIconWidgets.social,
+            icon: MyModusIconWidgets.social(context),
             label: 'Соцсети',
           ),
           BottomNavigationBarItem(
-            icon: MyModusIconWidgets.profile,
+            icon: MyModusIconWidgets.profile(context),
             label: 'Профиль',
           ),
           BottomNavigationBarItem(
-            icon: MyModusIconWidgets.aiChat,
+            icon: MyModusIconWidgets.aiChat(context),
             label: 'AI-чат',
           ),
           BottomNavigationBarItem(
-            icon: MyModusIconWidgets.pos,
+            icon: MyModusIconWidgets.pos(context),
             label: 'POS',
           ),
           BottomNavigationBarItem(
-            icon: MyModusIconWidgets.inventory,
+            icon: MyModusIconWidgets.inventory(context),
             label: 'Склад',
           ),
           BottomNavigationBarItem(
-            icon: MyModusIconWidgets.nft,
+            icon: MyModusIconWidgets.nft(context),
             label: 'NFT',
           ),
           BottomNavigationBarItem(
-            icon: MyModusIconWidgets.analytics,
+            icon: MyModusIconWidgets.analytics(context),
             label: 'Аналитика',
           ),
           BottomNavigationBarItem(
-            icon: MyModusIconWidgets.website,
+            icon: MyModusIconWidgets.website(context),
             label: 'Сайт',
           ),
         ],

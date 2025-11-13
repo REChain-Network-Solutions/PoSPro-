@@ -44,132 +44,223 @@ class MyModusIcons {
 // Альтернативные иконки с использованием комбинации стандартных
 class MyModusIconWidgets {
   // Главная - Комбинация dashboard и home
-  static Widget home = Container(
-    padding: const EdgeInsets.all(8),
-    decoration: BoxDecoration(
-      color: Colors.blue.withOpacity(0.1),
-      borderRadius: BorderRadius.circular(8),
-    ),
-    child: const Icon(Icons.dashboard, color: Colors.blue, size: 20),
-  );
+  static Widget home(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isSmallScreen = screenWidth < 400;
+    final iconSize = isSmallScreen ? 16.0 : 20.0;
+    final padding = isSmallScreen ? 4.0 : 8.0;
+
+    return Container(
+      padding: EdgeInsets.all(padding),
+      decoration: BoxDecoration(
+        color: Colors.blue.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Icon(Icons.dashboard, color: Colors.blue, size: iconSize),
+    );
+  }
   
   // Мода - Комбинация style и fashion
-  static Widget fashion = Container(
-    padding: const EdgeInsets.all(8),
-    decoration: BoxDecoration(
-      color: Colors.pink.withOpacity(0.1),
-      borderRadius: BorderRadius.circular(8),
-    ),
-    child: const Icon(Icons.style, color: Colors.pink, size: 20),
-  );
-  
+  static Widget fashion(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isSmallScreen = screenWidth < 400;
+    final iconSize = isSmallScreen ? 16.0 : 20.0;
+    final padding = isSmallScreen ? 4.0 : 8.0;
+
+    return Container(
+      padding: EdgeInsets.all(padding),
+      decoration: BoxDecoration(
+        color: Colors.pink.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Icon(Icons.style, color: Colors.pink, size: iconSize),
+    );
+  }
+
   // Маркетплейс - Комбинация store и shopping_cart
-  static Widget marketplace = Container(
-    padding: const EdgeInsets.all(8),
-    decoration: BoxDecoration(
-      color: Colors.green.withOpacity(0.1),
-      borderRadius: BorderRadius.circular(8),
-    ),
-    child: const Icon(Icons.store, color: Colors.green, size: 20),
-  );
-  
+  static Widget marketplace(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isSmallScreen = screenWidth < 400;
+    final iconSize = isSmallScreen ? 16.0 : 20.0;
+    final padding = isSmallScreen ? 4.0 : 8.0;
+
+    return Container(
+      padding: EdgeInsets.all(padding),
+      decoration: BoxDecoration(
+        color: Colors.green.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Icon(Icons.store, color: Colors.green, size: iconSize),
+    );
+  }
+
   // AI - Комбинация psychology и smart_toy
-  static Widget ai = Container(
-    padding: const EdgeInsets.all(8),
-    decoration: BoxDecoration(
-      color: Colors.purple.withOpacity(0.1),
-      borderRadius: BorderRadius.circular(8),
-    ),
-    child: const Icon(Icons.psychology, color: Colors.purple, size: 20),
-  );
-  
+  static Widget ai(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isSmallScreen = screenWidth < 400;
+    final iconSize = isSmallScreen ? 16.0 : 20.0;
+    final padding = isSmallScreen ? 4.0 : 8.0;
+
+    return Container(
+      padding: EdgeInsets.all(padding),
+      decoration: BoxDecoration(
+        color: Colors.purple.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Icon(Icons.psychology, color: Colors.purple, size: iconSize),
+    );
+  }
+
   // Web3 - Комбинация account_balance_wallet и currency_bitcoin
-  static Widget web3 = Container(
-    padding: const EdgeInsets.all(8),
-    decoration: BoxDecoration(
-      color: Colors.orange.withOpacity(0.1),
-      borderRadius: BorderRadius.circular(8),
-    ),
-    child: const Icon(Icons.account_balance_wallet, color: Colors.orange, size: 20),
-  );
-  
+  static Widget web3(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isSmallScreen = screenWidth < 400;
+    final iconSize = isSmallScreen ? 16.0 : 20.0;
+    final padding = isSmallScreen ? 4.0 : 8.0;
+
+    return Container(
+      padding: EdgeInsets.all(padding),
+      decoration: BoxDecoration(
+        color: Colors.orange.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Icon(Icons.account_balance_wallet, color: Colors.orange, size: iconSize),
+    );
+  }
+
   // Соцсети - Комбинация people и share
-  static Widget social = Container(
-    padding: const EdgeInsets.all(8),
-    decoration: BoxDecoration(
-      color: Colors.teal.withOpacity(0.1),
-      borderRadius: BorderRadius.circular(8),
-    ),
-    child: const Icon(Icons.people, color: Colors.teal, size: 20),
-  );
-  
+  static Widget social(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isSmallScreen = screenWidth < 400;
+    final iconSize = isSmallScreen ? 16.0 : 20.0;
+    final padding = isSmallScreen ? 4.0 : 8.0;
+
+    return Container(
+      padding: EdgeInsets.all(padding),
+      decoration: BoxDecoration(
+        color: Colors.teal.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Icon(Icons.people, color: Colors.teal, size: iconSize),
+    );
+  }
+
   // Профиль - Комбинация person и account_circle
-  static Widget profile = Container(
-    padding: const EdgeInsets.all(8),
-    decoration: BoxDecoration(
-      color: Colors.indigo.withOpacity(0.1),
-      borderRadius: BorderRadius.circular(8),
-    ),
-    child: const Icon(Icons.person, color: Colors.indigo, size: 20),
-  );
-  
+  static Widget profile(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isSmallScreen = screenWidth < 400;
+    final iconSize = isSmallScreen ? 16.0 : 20.0;
+    final padding = isSmallScreen ? 4.0 : 8.0;
+
+    return Container(
+      padding: EdgeInsets.all(padding),
+      decoration: BoxDecoration(
+        color: Colors.indigo.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Icon(Icons.person, color: Colors.indigo, size: iconSize),
+    );
+  }
+
   // AI-чат - Комбинация chat_bubble и smart_toy
-  static Widget aiChat = Container(
-    padding: const EdgeInsets.all(8),
-    decoration: BoxDecoration(
-      color: Colors.deepPurple.withOpacity(0.1),
-      borderRadius: BorderRadius.circular(8),
-    ),
-    child: const Icon(Icons.chat_bubble, color: Colors.deepPurple, size: 20),
-  );
-  
+  static Widget aiChat(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isSmallScreen = screenWidth < 400;
+    final iconSize = isSmallScreen ? 16.0 : 20.0;
+    final padding = isSmallScreen ? 4.0 : 8.0;
+
+    return Container(
+      padding: EdgeInsets.all(padding),
+      decoration: BoxDecoration(
+        color: Colors.deepPurple.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Icon(Icons.chat_bubble, color: Colors.deepPurple, size: iconSize),
+    );
+  }
+
   // POS - Комбинация point_of_sale и receipt
-  static Widget pos = Container(
-    padding: const EdgeInsets.all(8),
-    decoration: BoxDecoration(
-      color: Colors.red.withOpacity(0.1),
-      borderRadius: BorderRadius.circular(8),
-    ),
-    child: const Icon(Icons.point_of_sale, color: Colors.red, size: 20),
-  );
-  
+  static Widget pos(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isSmallScreen = screenWidth < 400;
+    final iconSize = isSmallScreen ? 16.0 : 20.0;
+    final padding = isSmallScreen ? 4.0 : 8.0;
+
+    return Container(
+      padding: EdgeInsets.all(padding),
+      decoration: BoxDecoration(
+        color: Colors.red.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Icon(Icons.point_of_sale, color: Colors.red, size: iconSize),
+    );
+  }
+
   // Склад - Комбинация inventory и warehouse
-  static Widget inventory = Container(
-    padding: const EdgeInsets.all(8),
-    decoration: BoxDecoration(
-      color: Colors.brown.withOpacity(0.1),
-      borderRadius: BorderRadius.circular(8),
-    ),
-    child: const Icon(Icons.inventory, color: Colors.brown, size: 20),
-  );
-  
+  static Widget inventory(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isSmallScreen = screenWidth < 400;
+    final iconSize = isSmallScreen ? 16.0 : 20.0;
+    final padding = isSmallScreen ? 4.0 : 8.0;
+
+    return Container(
+      padding: EdgeInsets.all(padding),
+      decoration: BoxDecoration(
+        color: Colors.brown.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Icon(Icons.inventory, color: Colors.brown, size: iconSize),
+    );
+  }
+
   // NFT - Комбинация token и art_track
-  static Widget nft = Container(
-    padding: const EdgeInsets.all(8),
-    decoration: BoxDecoration(
-      color: Colors.amber.withOpacity(0.1),
-      borderRadius: BorderRadius.circular(8),
-    ),
-    child: const Icon(Icons.token, color: Colors.amber, size: 20),
-  );
-  
+  static Widget nft(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isSmallScreen = screenWidth < 400;
+    final iconSize = isSmallScreen ? 16.0 : 20.0;
+    final padding = isSmallScreen ? 4.0 : 8.0;
+
+    return Container(
+      padding: EdgeInsets.all(padding),
+      decoration: BoxDecoration(
+        color: Colors.amber.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Icon(Icons.token, color: Colors.amber, size: iconSize),
+    );
+  }
+
   // Аналитика - Комбинация analytics и trending_up
-  static Widget analytics = Container(
-    padding: const EdgeInsets.all(8),
-    decoration: BoxDecoration(
-      color: Colors.lightGreen.withOpacity(0.1),
-      borderRadius: BorderRadius.circular(8),
-    ),
-    child: const Icon(Icons.analytics, color: Colors.lightGreen, size: 20),
-  );
-  
+  static Widget analytics(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isSmallScreen = screenWidth < 400;
+    final iconSize = isSmallScreen ? 16.0 : 20.0;
+    final padding = isSmallScreen ? 4.0 : 8.0;
+
+    return Container(
+      padding: EdgeInsets.all(padding),
+      decoration: BoxDecoration(
+        color: Colors.lightGreen.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Icon(Icons.analytics, color: Colors.lightGreen, size: iconSize),
+    );
+  }
+
   // Сайт - Комбинация web и language
-  static Widget website = Container(
-    padding: const EdgeInsets.all(8),
-    decoration: BoxDecoration(
-      color: Colors.cyan.withOpacity(0.1),
-      borderRadius: BorderRadius.circular(8),
-    ),
-    child: const Icon(Icons.web, color: Colors.cyan, size: 20),
-  );
+  static Widget website(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isSmallScreen = screenWidth < 400;
+    final iconSize = isSmallScreen ? 16.0 : 20.0;
+    final padding = isSmallScreen ? 4.0 : 8.0;
+
+    return Container(
+      padding: EdgeInsets.all(padding),
+      decoration: BoxDecoration(
+        color: Colors.cyan.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Icon(Icons.web, color: Colors.cyan, size: iconSize),
+    );
+  }
 }

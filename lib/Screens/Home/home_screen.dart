@@ -617,21 +617,40 @@ class _HomeScreenState extends State<HomeScreen> {
                     const SizedBox(
                       height: 20,
                     ),
-                    GridView.count(
-                      physics: const NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      childAspectRatio: 3.0,
-                      crossAxisSpacing: 10,
-                      mainAxisSpacing: 10,
-                      crossAxisCount: 2,
-                      children: List.generate(
-                        freeIcons.length,
-                        (index) => HomeGridCards(
-                          gridItems: freeIcons[index],
-                          color: color[index],
-                          visibility: businessInfo.value?.user?.visibility,
-                        ),
-                      ),
+                    LayoutBuilder(
+                      builder: (context, constraints) {
+                        final screenWidth = constraints.maxWidth;
+                        int crossAxisCount = 2;
+                        double childAspectRatio = 3.0;
+
+                        if (screenWidth >= 600) {
+                          crossAxisCount = 3;
+                          childAspectRatio = 2.5;
+                        } else if (screenWidth >= 400) {
+                          crossAxisCount = 2;
+                          childAspectRatio = 2.8;
+                        } else {
+                          crossAxisCount = 1;
+                          childAspectRatio = 4.0;
+                        }
+
+                        return GridView.count(
+                          physics: const NeverScrollableScrollPhysics(),
+                          shrinkWrap: true,
+                          childAspectRatio: childAspectRatio,
+                          crossAxisSpacing: 10,
+                          mainAxisSpacing: 10,
+                          crossAxisCount: crossAxisCount,
+                          children: List.generate(
+                            freeIcons.length,
+                            (index) => HomeGridCards(
+                              gridItems: freeIcons[index],
+                              color: color[index],
+                              visibility: businessInfo.value?.user?.visibility,
+                            ),
+                          ),
+                        );
+                      },
                     ),
                     const SizedBox(height: 20),
                     Container(
