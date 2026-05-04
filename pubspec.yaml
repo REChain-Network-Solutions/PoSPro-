@@ -55,7 +55,7 @@ dependencies:
   # flutter_bluetooth_printer: ^1.0.0  # Временно отключено для совместимости
   esc_pos_utils: ^1.1.0
   permission_handler: ^11.3.1
-  in_app_update: ^4.0.1
+  in_app_update: ^4.2.5
   shared_preferences: ^2.2.2
   restart_app: ^1.2.1
   intl:
